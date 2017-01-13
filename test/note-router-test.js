@@ -28,7 +28,7 @@ describe('testing /api/notes', function(){
 
 
   describe('POST with valid input', () => {
-    it('POST with valid input and should return a note', (done) => {
+    it.only('POST with valid input and should return a note', (done) => {
       superagent.post(`${apiURL}`)
       .send(this.tempNote)
       .then((res) => {
@@ -90,8 +90,8 @@ describe('testing /api/notes', function(){
     });
   });
 
-  describe.skip('GET /api/notes/ids', () => {
-    it('should return an array of IDs', (done) => {
+  describe('GET /api/notes/ids', () => {
+    it.only('should return an array of IDs', (done) => {
       superagent.get(`${apiURL}/ids`)
       .then((res) => {
         expect(res.body).to.be.instanceof(Array);
@@ -101,6 +101,7 @@ describe('testing /api/notes', function(){
       .catch((done));
     });
   });
+
   describe('DELETE /api/notes/?id', () => {
     it('should have status 204 and succesfully delete the item', (done) => {
       superagent.delete(`${apiURL}?id=${this.tempNote.id}`)
