@@ -16,6 +16,8 @@
     "superagent": "^3.3.2"
   },
   "dependencies": {
+    "http-errors": "^1.5.1",
+    "mkdirp-bluebird": "^1.2.1",
     "node-uuid": "^1.4.7"
   }
 }
