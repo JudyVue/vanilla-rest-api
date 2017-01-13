@@ -1,0 +1,21 @@
+{
+  "name": "todo-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "servers.js",
+  "scripts": {
+    "test": "./node_modules/mocha/bin/mocha",
+    "test:watch": "npm run test -- -w"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "mocha": "^3.2.0",
+    "superagent": "^3.3.2"
+  },
+  "dependencies": {
+    "node-uuid": "^1.4.7"
+  }
+}
