@@ -71,11 +71,13 @@ module.exports = function(router){
     }
 
     storage.deleteItem('notes', id)
-    .then(() =>{
-      res.statusCode = 204;
+    .then((status) =>{
+      console.log(status, 'status 75 of note-router');
+      res.statusCode = status;
       res.end();
     })
     .catch((err) => {
+      console.log(err);
       res.statusCode = err.status;
       console.error(err);
       res.end();

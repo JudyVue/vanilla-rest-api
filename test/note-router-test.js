@@ -4,23 +4,28 @@ const expect = require('chai').expect;
 const superagent = require('superagent');
 const Note = require('../model/note.js');
 const storage = require('../lib/storage.js');
+const del = require('del');
 
 require('../servers.js');
 
 
 const apiURL = `http://localhost:3000/api/notes`;
 
-let id;
 
 describe('testing /api/notes', function(){
-
-
   before((done) => {
     this.tempNote = new Note({title: 'hello', content: 'world'});
     storage.setItem('notes', this.tempNote)
     .then(() => done())
     .catch(done);
   });
+
+  after((done) => {
+    del([`${__dirname}/../data/notes`])
+    .then(() => done())
+    .catch(done);
+  })
+
 
   describe('POST with valid input', () => {
     it('POST with valid input and should return a note', (done) => {
@@ -32,7 +37,6 @@ describe('testing /api/notes', function(){
         expect(res.body.content).to.equal('world');
         expect(Boolean(res.body.created)).to.equal(true);
         expect(Boolean(res.body.id)).to.equal(true);
-        res.body.id = id;
         done();
       })
       .catch(done);
@@ -86,7 +90,7 @@ describe('testing /api/notes', function(){
     });
   });
 
-  describe('GET /api/notes/ids', () => {
+  describe.skip('GET /api/notes/ids', () => {
     it('should return an array of IDs', (done) => {
       superagent.get(`${apiURL}/ids`)
       .then((res) => {
@@ -108,4 +112,14 @@ describe('testing /api/notes', function(){
     });
   });
 
+  describe('DELETE /api/notes/?id with bad ID', () => {
+    it('should have status 404', (done) => {
+      superagent.delete(`${apiURL}?id=12345`)
+      .then(done)
+      .catch((err) => {
+      expect(err.status).to.equal(404);
+      done();
+      });
+    });
+  });
 });
