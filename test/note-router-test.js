@@ -15,9 +15,7 @@ const apiURL = `http://localhost:3000/api/notes`;
 describe('testing /api/notes', function(){
   before((done) => {
     this.tempNote = new Note({title: 'hello', content: 'world'});
-    storage.setItem('notes', this.tempNote)
-    .then(() => done())
-    .catch(done);
+    done();
   });
 
   after((done) => {
@@ -27,8 +25,8 @@ describe('testing /api/notes', function(){
   })
 
 
-  describe('POST with valid input', () => {
-    it.only('POST with valid input and should return a note', (done) => {
+  describe.only('POST with valid input', () => {
+    it('POST with valid input and should return a note', (done) => {
       superagent.post(`${apiURL}`)
       .send(this.tempNote)
       .then((res) => {
@@ -90,12 +88,15 @@ describe('testing /api/notes', function(){
     });
   });
 
-  describe('GET /api/notes/ids', () => {
-    it.only('should return an array of IDs', (done) => {
+  describe.only('GET /api/notes/ids', () => {
+    it('should return an array of IDs', (done) => {
       superagent.get(`${apiURL}/ids`)
       .then((res) => {
+        res.body.some((id) =>{
+          expect(Boolean(id = this.tempNote.id)).to.equal(true);
+        })
         expect(res.body).to.be.instanceof(Array);
-        expect(res.body[0]).to.equal(this.tempNote.id);
+        console.log(res.body);
         done();
       })
       .catch((done));
@@ -121,6 +122,17 @@ describe('testing /api/notes', function(){
       expect(err.status).to.equal(404);
       done();
       });
+    });
+  });
+});
+
+describe.skip('GET /api/notes/ids with no IDs available', function() {
+  it('should return a 404 because no IDs available', (done) => {
+    superagent.get(`${apiURL}/ids`)
+    .then(done)
+    .catch((err) => {
+      expect(err.status).to.equal(404);
+      done();
     });
   });
 });
