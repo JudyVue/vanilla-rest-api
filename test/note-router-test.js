@@ -4,25 +4,28 @@ const expect = require('chai').expect;
 const superagent = require('superagent');
 const Note = require('../model/note.js');
 const storage = require('../lib/storage.js');
+const del = require('del');
 
 require('../servers.js');
 
 
 const apiURL = `http://localhost:3000/api/notes`;
 
-let id;
 
 describe('testing /api/notes', function(){
-
-
   before((done) => {
     this.tempNote = new Note({title: 'hello', content: 'world'});
-    storage.setItem('notes', this.tempNote)
-    .then(() => done())
-    .catch(done);
+    done();
   });
 
-  describe('POST with valid input', () => {
+  after((done) => {
+    del([`${__dirname}/../data/notes`])
+    .then(() => done())
+    .catch(done);
+  })
+
+
+  describe.only('POST with valid input', () => {
     it('POST with valid input and should return a note', (done) => {
       superagent.post(`${apiURL}`)
       .send(this.tempNote)
@@ -32,7 +35,6 @@ describe('testing /api/notes', function(){
         expect(res.body.content).to.equal('world');
         expect(Boolean(res.body.created)).to.equal(true);
         expect(Boolean(res.body.id)).to.equal(true);
-        res.body.id = id;
         done();
       })
       .catch(done);
@@ -86,17 +88,21 @@ describe('testing /api/notes', function(){
     });
   });
 
-  describe('GET /api/notes/ids', () => {
+  describe.only('GET /api/notes/ids', () => {
     it('should return an array of IDs', (done) => {
       superagent.get(`${apiURL}/ids`)
       .then((res) => {
+        res.body.some((id) =>{
+          expect(Boolean(id = this.tempNote.id)).to.equal(true);
+        })
         expect(res.body).to.be.instanceof(Array);
-        expect(res.body[0]).to.equal(this.tempNote.id);
+        console.log(res.body);
         done();
       })
       .catch((done));
     });
   });
+
   describe('DELETE /api/notes/?id', () => {
     it('should have status 204 and succesfully delete the item', (done) => {
       superagent.delete(`${apiURL}?id=${this.tempNote.id}`)
@@ -108,4 +114,25 @@ describe('testing /api/notes', function(){
     });
   });
 
+  describe('DELETE /api/notes/?id with bad ID', () => {
+    it('should have status 404', (done) => {
+      superagent.delete(`${apiURL}?id=12345`)
+      .then(done)
+      .catch((err) => {
+      expect(err.status).to.equal(404);
+      done();
+      });
+    });
+  });
+});
+
+describe.skip('GET /api/notes/ids with no IDs available', function() {
+  it('should return a 404 because no IDs available', (done) => {
+    superagent.get(`${apiURL}/ids`)
+    .then(done)
+    .catch((err) => {
+      expect(err.status).to.equal(404);
+      done();
+    });
+  });
 });

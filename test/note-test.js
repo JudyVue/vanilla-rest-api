@@ -3,11 +3,11 @@
 const expect = require('chai').expect;
 const Note = require('../model/note.js');
 
-describe.skip('testing note model', function(){
+describe('testing note model', function(){
   it('should create a note', function(){
     let data = {
-      title: 'shark in the dark',
-      content: 'singing to a lark named mark',
+      title: 'hello',
+      content: 'world',
     };
 
     let tempNote = new Note(data);
